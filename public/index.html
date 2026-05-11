@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Sentiment Analysis - Project</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 40px; }
+        h1 { color: #1a73e8; }
+        .container { display: flex; gap: 20px; width: 90%; max-width: 1000px; }
+        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); flex: 1; text-align: center; border-top: 5px solid #ddd; }
+        .local-card { border-top-color: #34a853; } /* لون أخضر للمحلي */
+        .gemini-card { border-top-color: #4285f4; } /* لون أزرق لجمناي */
+        textarea { width: 100%; height: 120px; border-radius: 8px; border: 1px solid #ccc; padding: 10px; margin-bottom: 15px; resize: none; box-sizing: border-box; }
+        button { padding: 10px 25px; border: none; border-radius: 5px; cursor: pointer; color: white; font-weight: bold; transition: 0.3s; }
+        .btn-local { background-color: #34a853; }
+        .btn-gemini { background-color: #4285f4; }
+        button:hover { opacity: 0.8; }
+        .result { margin-top: 20px; padding: 10px; border-radius: 5px; background: #f8f9fa; min-height: 40px; font-weight: bold; }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; margin-bottom: 10px; color: white; }
+    </style>
+</head>
+<body>
+
+    <h1>محلل المشاعر الهجين (Hybrid Sentiment)</h1>
+    <p>مشروع أتمتة اختبارات هندسة البرمجيات</p>
+
+    <div class="container">
+        <div class="card local-card">
+            <span class="badge" style="background: #34a853;">المحرك المحلي (Offline)</span>
+            <h3>تحليل سريع (Local)</h3>
+            <textarea id="localInput" placeholder="اكتب جملة بالإنجليزية هنا..."></textarea>
+            <button class="btn-local" onclick="analyzeLocal()">تحليل محلي ✅</button>
+            <div id="localResult" class="result">النتيجة ستظهر هنا</div>
+        </div>
+
+        <div class="card gemini-card">
+            <span class="badge" style="background: #4285f4;">محرك Google Gemini</span>
+            <h3>تحليل عميق (AI)</h3>
+            <textarea id="geminiInput" placeholder="اكتب جملة بالإنجليزية هنا..."></textarea>
+            <button class="btn-gemini" onclick="analyzeGemini()">تحليل بجمناي 🚀</button>
+            <div id="geminiResult" class="result">النتيجة ستظهر هنا</div>
+        </div>
+    </div>
+
+    <script>
+        // دالة التحليل المحلي
+        async function analyzeLocal() {
+            const text = document.getElementById('localInput').value;
+            const res = await fetch(`/analyze-local?text=${encodeURIComponent(text)}`);
+            const data = await res.json();
+            document.getElementById('localResult').innerHTML = `الحالة: ${data.sentiment}`;
+        }
+
+        // دالة تحليل جمناي
+        async function analyzeGemini() {
+            const text = document.getElementById('geminiInput').value;
+            document.getElementById('geminiResult').innerText = "جاري التحليل...";
+            try {
+                const res = await fetch(`/analyze-gemini?text=${encodeURIComponent(text)}`);
+                const data = await res.json();
+                document.getElementById('geminiResult').innerHTML = `التحليل: ${data.sentiment || data.error}`;
+            } catch (e) {
+                document.getElementById('geminiResult').innerText = "خطأ في الاتصال";
+            }
+        }
+    </script>
+</body>
+</html>
